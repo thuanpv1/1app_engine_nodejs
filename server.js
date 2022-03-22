@@ -58,7 +58,8 @@ app.get('/listofmp3', (request, response) => {
         var fileSizeInBytes = stats.size;
         // Convert the file size to megabytes (optional)
         var fileSizeInMegabytes = fileSizeInBytes / (1024*1024);
-        result.push({
+        let sub = file.substring(file.length - 4).toLocaleLowerCase()
+        if (sub === '.mp3') result.push({
             file,
             size: fileSizeInMegabytes
         })
