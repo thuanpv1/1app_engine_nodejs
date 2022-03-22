@@ -32,7 +32,7 @@
         display: none;
     }
     .textOverFlow {
-        height: 70px;
+        height: 140px;
         text-overflow: ellipsis;
     }
 </style>
@@ -106,9 +106,11 @@
                 originNode.setAttribute('id', 'youtubeListsId')
                 originNodeParent.append(originNode)
 
+                let count = 0
+                let all = data.items.length
                 for (let item of data.items) {
                     if (item['type'] === 'video') {
-
+                        count += 1
                         let node012 = document.createElement("div");
                         node012.setAttribute('class', 'defaultHiddenSearch')
 
@@ -119,7 +121,7 @@
     
                         let node0 = document.createElement("div");
                         node0.setAttribute('class', 'col-12 text-center mt-5 textOverFlow')
-                        let node0txt = document.createTextNode(videoTitle + '(' + videoLength + ')')
+                        let node0txt = document.createTextNode(`[${count}/${all}]` + videoTitle + '(' + videoLength + ')')
                         node0.append(node0txt)
     
                         let node1 = document.createElement("div");
@@ -220,11 +222,15 @@
                 if (e.currentTarget.readyState === 4) {
                     let data = Http.responseText? JSON.parse(Http.responseText) : []
                     let originNode = document.getElementById('listOfFileId')
+                    let count = 0
+                    let all = data.length
+
                     for (let each of data) {
+                        count += 1
                         let node = document.createElement('div')
                         node.setAttribute('class', 'defaultHidden row border-bottom border-primary m-1')
                         let node1 = document.createElement("div");
-                        let node1txt = document.createTextNode(each.file.split('_').join(' ') + ' (' + parseFloat(each.size).toFixed(3) +' Mb)')
+                        let node1txt = document.createTextNode('[' + count + '/' + all +  '] '+ each.file.split('_').join(' ') + ' (' + parseFloat(each.size).toFixed(3) +' Mb)')
                         node1.setAttribute('class', 'col-12 text-wrap pr-3 labelOverflow')
                         node1.append(node1txt)
         
