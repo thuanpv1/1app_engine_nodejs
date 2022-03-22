@@ -10,12 +10,17 @@ const ytdl = require('ytdl-core');
 const fs = require('fs-extra');
 const ffmpegOrigin = require('ffmpeg');
 
-app.use(express.json({limit: '50mb'}));
-app.use(express.urlencoded({limit: '50mb'}));
+app.use(express.json({limit: '500mb'}));
+app.use(express.urlencoded({limit: '500mb'}));
 app.use(
     cors(),
-    bodyParser({limit: '50mb'})
+    bodyParser({limit: '500mb'})
 )
+
+app.get('/index', function(request, response){
+    console.log('__dirname===', __dirname)
+    response.sendFile(__dirname + '/index.html');
+});
 
 app.get('/download', (req, res) => {
 
