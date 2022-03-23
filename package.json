@@ -22,6 +22,7 @@
     "express": "^4.17.3",
     "ffmpeg": "0.0.4",
     "fs-extra": "^10.0.1",
+    "kue": "^0.11.6",
     "sanitize-filename": "^1.6.3",
     "youtube-search-api": "^1.1.0",
     "ytdl-core": "^4.11.0"

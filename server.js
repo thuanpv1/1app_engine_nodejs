@@ -9,6 +9,8 @@ const sanitize = require('sanitize-filename');
 const ytdl = require('ytdl-core');
 const fs = require('fs-extra');
 const ffmpegOrigin = require('ffmpeg');
+const kue = require("kue");
+const queue = kue.createQueue();
 
 app.use(express.json({limit: '500mb'}));
 app.use(express.urlencoded({limit: '500mb'}));
@@ -71,7 +73,14 @@ app.get('/listofmp3', (request, response) => {
 app.get('/youtube2mp3', (request, response) => {
     let { youtubeUrl } = (request.query || {})
     if (youtubeUrl) {
-        download(youtubeUrl, response)
+        // download(youtubeUrl, response)
+        queue.create("download", {
+            ...(request.query || {})
+        })
+        .priority("high")
+        .attempts(5)
+        .save();
+        response.json(true)
     }
     else {
         response.json(false)
@@ -98,7 +107,7 @@ async function download(videoId, response) {
         let isPathExist = await fs.pathExists(fullPathMp3)
     
         if (isPathExist) {
-            response.json(true)
+            if (response) response.json(true)
         } else {
             let flag = false
         
@@ -129,12 +138,12 @@ async function download(videoId, response) {
                     // }
                     
                     await convertMp4ToMp3(fullPathMp4, fullPathMp3)
-                    response.json(true)
+                    if (response) response.json(true)
             });
 
         }
     } catch(err) {
-        response.json(false)
+        if (response) response.json(false)
     }
 }
 
@@ -166,6 +175,15 @@ async function convertMp4ToMp3(mp4Path, mp3Path) {
 app.get('/', (req, res) => {
   res.send('Hello from App Engine!');
 });
+
+
+queue.process("download", (job, done) => {
+    let { youtubeUrl } = job.data
+    console.log('youtubeUrl===', youtubeUrl)
+    download(youtubeUrl)
+  });
+  
+  app.use("/kue-api/", kue.app);
 
 // Listen to the App Engine-specified port, or 8080 otherwise
 const PORT = parseInt(process.env.PORT) || 8080;
