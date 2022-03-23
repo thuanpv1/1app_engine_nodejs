@@ -181,6 +181,8 @@ queue.process("download", (job, done) => {
     let { youtubeUrl } = job.data
     console.log('youtubeUrl===', youtubeUrl)
     download(youtubeUrl)
+    done()
+    return true
   });
   
   app.use("/kue-api/", kue.app);
