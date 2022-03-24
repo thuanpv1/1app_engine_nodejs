@@ -67,7 +67,7 @@
                         let node22 = document.createElement('button')
                         node22.setAttribute('class', 'btn btn-primary m-1')
                         node22.setAttribute('onclick', 'convertVideo2Mp3("' + id + '")')
-                        let node22txt = document.createTextNode('CV')
+                        let node22txt = document.createTextNode('Download MP3')
                         node22.append(node22txt)
 
                         let node33 = document.createElement('button')
@@ -83,8 +83,8 @@
                         node44.append(node44txt)
     
                         node2.append(node22)
-                        node2.append(node33)
-                        node2.append(node44)
+                        // node2.append(node33)
+                        // node2.append(node44)
     
                         node012.append(node0)
                         node012.append(node1)
@@ -156,10 +156,10 @@
                     for (let each of data) {
                         count += 1
                         let node = document.createElement('div')
-                        node.setAttribute('class', 'defaultHidden row border-bottom border-primary m-1')
+                        node.setAttribute('class', 'defaultHidden row border m-1 mb-2 bg-light p-1')
         
                         let node2 = document.createElement("div");
-                        node2.setAttribute('class', 'col-9')
+                        node2.setAttribute('class', 'col-12')
                         
                         // audio tag
                         let node2Vide0 = document.createElement('audio')
