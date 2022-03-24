@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "nodemon node server.js"
   },
   "repository": {
     "type": "git",
@@ -23,6 +23,7 @@
     "ffmpeg": "0.0.4",
     "fs-extra": "^10.0.1",
     "kue": "^0.11.6",
+    "nodemon": "^2.0.15",
     "sanitize-filename": "^1.6.3",
     "youtube-search-api": "^1.1.0",
     "ytdl-core": "^4.11.0"

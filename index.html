@@ -4,335 +4,58 @@
   <title>Youtube2Mp3</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" src="css/style.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="js/jsfunction.js"></script>
+
 </head>
 <body onload="fetchAllFiles()">
-<style>
-    .labelOverflow {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        height: 140px;
-    }
-    .colorgreen {
-        color: green;
-    }
-    .colorred {
-        color: red;
-    }
+<!-- Links (sit on top) -->
+<div class="w3-top">
+    <div class="w3-row w3-large w3-light-grey">
+      <div class="w3-col s6">
+        <a id="menump3" href="#" class="w3-button w3-block" onclick="showMenu('mp3')">MP3</a>
+      </div>
+      <div class="w3-col s6">
+        <a href="#plans" class="w3-button w3-block" onclick="showMenu('youtube')">Youtube</a>
+      </div>
+    </div>
+  </div>
 
-    .defaultHidden {
-        display: none;
-    }
-
-    .defaultHiddenSearch {
-        display: none;
-    }
-    .textOverFlow {
-        height: 140px;
-        text-overflow: ellipsis;
-    }
-</style>
 <div class="jumbotron text-center">
   <h1>Youtube2Mp3</h1>
 </div>
   
 <div class="container">
-  <div class="row m-0">
-    <div class="col-12">
-        <div class="form-group">
-          <label for="urlInputId">YoutubeURL: <span class="colorgreen" id="urlLableGreen"></span><span id="urlLableRed" class="colorred"></span></label>
-          <input type="text" class="form-control" id="urlInputId" aria-describedby="emailHelp" placeholder="Enter url">
-        </div>
-        <div class="text-center">
-            <button class="btn btn-primary" onclick="convertVideo2Mp3()">Submit</button>
-        </div>
+  <div id="youtube">
+      <div class="row text-center m-0">
+          <div class="col-12 mt-3">
+              <div class="form-group">
+                  <input type="text" class="form-control" id="searchYoutubeId" aria-describedby="emailHelp" placeholder="Search youtube">
+                  <button class="btn btn-primary m-2" onclick="searchYoutube()">Search</button>
+              </div>
+          </div>
+      </div>
+      <div class="row text-center m-0" id="youtubeListsIdParent" style="height: 0px; overflow-y: auto;">
+          <!-- list of searched videos -->
+  
       </div>
   </div>
-  <div class="row text-center m-0">
-    <div class="col-12 mt-3">
-        <div class="form-group">
-            <input type="text" class="form-control" id="searchYoutubeId" aria-describedby="emailHelp" placeholder="Search youtube">
-            <button class="btn btn-primary m-2" onclick="searchYoutube()">Search</button>
-          </div>
-    </div>
-  </div>
-  <div class="row text-center m-0" id="youtubeListsIdParent" style="height: 0px; overflow-y: auto;">
-      <!-- list of searched videos -->
-
-  </div>
-<div class="text-center mt-3 col-12">
-    <h2>Danh Sach File Mp3</h2>
-    <button class="btn btn-primary" onclick="location.reload()">Refresh</button>
-</div>
-  <div id="listOfFileId">
-      
+  <div id="mp3">
+      <div class="text-center mt-3 col-12">
+          <h2>Danh Sach File Mp3</h2>
+          <button class="btn btn-primary" onclick="location.reload()">Refresh</button>
+      </div>
+      <div id="listOfFileId">
+          
+      </div>
   </div>
 </div>
-<script>
-    
-    // const host = 'https://730ff53a46d693.lhrtunnel.link'
-    // const host = 'http://localhost:4000'
-    const host = window.location.origin
-    var slideIndexMP3 = 1;
-    var slideIndexSearch = 1;
-
-    function searchYoutube() {
-        let inputUrl = document.getElementById('searchYoutubeId').value
-        const Http = new XMLHttpRequest();
-        const baseUrl = host + '/search-youtube2?q='
-        const url=baseUrl + inputUrl
-        Http.open("GET", url);
-        Http.send();
-        Http.onreadystatechange = (e) => {
-            if (e.currentTarget.readyState === 4) {
-                let data = Http.responseText? JSON.parse(Http.responseText) : []
-                // console.log('data===', data)
-                let originNodeParent = document.getElementById('youtubeListsIdParent')
-                if (data && data.items && data.items.length > 0) {
-                    originNodeParent.setAttribute('style', 'overflow-y: auto;')
-                } else {
-                    return null
-                }
-
-                let temp = document.getElementById('youtubeListsId')
-                if (temp) originNodeParent.removeChild(temp)
-                
-                let originNode = document.createElement('div')
-                originNode.setAttribute('class', 'col-11 text-center m-2')
-                originNode.setAttribute('id', 'youtubeListsId')
-                originNodeParent.append(originNode)
-
-                let count = 0
-                let all = data.items.length
-                for (let item of data.items) {
-                    if (item['type'] === 'video') {
-                        count += 1
-                        let node012 = document.createElement("div");
-                        node012.setAttribute('class', 'defaultHiddenSearch')
-
-                        let id = item['id']
-                        let imagePreview = item['thumbnail']['thumbnails'][0]['url']
-                        let videoTitle = item['title']
-                        let videoLength = item['length']? item['length']['simpleText'] : 'unknown'
-    
-                        let node0 = document.createElement("div");
-                        node0.setAttribute('class', 'col-12 text-center mt-5 textOverFlow')
-                        let node0txt = document.createTextNode(`[${count}/${all}]` + videoTitle + '(' + videoLength + ')')
-                        node0.append(node0txt)
-    
-                        let node1 = document.createElement("div");
-                        node1.setAttribute('class', 'col-12 text-center')
-    
-                        let node11 = document.createElement("img");
-                        node11.setAttribute('width', '100%')
-                        node11.setAttribute('height', '200px')
-                        node11.setAttribute('src', imagePreview)
-    
-                        node1.append(node11)
-    
-                        let node2 = document.createElement("div");
-                        node2.setAttribute('class', 'col-12 text-center')
-                        node2.setAttribute('style', 'padding-top: 50px;')
-    
-                        let node22 = document.createElement('button')
-                        node22.setAttribute('class', 'btn btn-primary m-1')
-                        node22.setAttribute('onclick', 'convertVideo2Mp3("' + id + '")')
-                        let node22txt = document.createTextNode('CV')
-                        node22.append(node22txt)
-
-                        let node33 = document.createElement('button')
-                        node33.setAttribute('class', 'btn btn-primary m-1 btn-info')
-                        node33.setAttribute('onclick', 'plusSlides(-1, "search")')
-                        let node33txt = document.createTextNode('Back')
-                        node33.append(node33txt)
-
-                        let node44 = document.createElement('button')
-                        node44.setAttribute('class', 'btn btn-primary m-1 btn-info')
-                        node44.setAttribute('onclick', 'plusSlides(1, "search")')
-                        let node44txt = document.createTextNode('Next')
-                        node44.append(node44txt)
-    
-                        node2.append(node22)
-                        node2.append(node33)
-                        node2.append(node44)
-    
-                        node012.append(node0)
-                        node012.append(node1)
-                        node012.append(node2)
-
-                        originNode.append(node012)
-                    }
-                }
-                showSlides(1, 'search')
-
-
-            }
-            
-        }
-
-
-    }
-
-    function convertVideo2Mp3(urlItem) {
-        let inputUrl = urlItem || document.getElementById('urlInputId').value
-        const Http = new XMLHttpRequest();
-        const baseUrl = host + '/youtube2mp3?youtubeUrl='
-        const url=baseUrl + inputUrl
-        Http.open("GET", url);
-        Http.send();
-
-        Http.onreadystatechange = (e) => {
-            console.log(Http.responseText)
-            if (Http.responseText === true || Http.responseText === 'true') {
-                document.getElementById('urlLableGreen').innerHTML = '(OK)'
-                document.getElementById('urlLableRed').innerHTML = ''
-            }
-            else {
-                document.getElementById('urlLableGreen').innerHTML = ''
-                document.getElementById('urlLableRed').innerHTML = '(Error)'
-            }
-        }
-
-    }
-
-    function xoaFile(filename) {
-        const Http = new XMLHttpRequest();
-        const baseUrl = host + '/delete?filename='
-        const url=baseUrl + filename
-        Http.open("GET", url);
-        Http.send();
-        Http.onreadystatechange = (e) => {
-            console.log(Http.responseText)
-            location.reload();
-        }
-    }
-    
-    function fetchAllFiles() {
-        const Http = new XMLHttpRequest();
-        const baseUrl = host + '/listofmp3'
-        const url=baseUrl
-        Http.open("GET", url);
-        Http.send();
-        Http.onreadystatechange = (e) => {
-            try {
-                if (e.currentTarget.readyState === 4) {
-                    let data = Http.responseText? JSON.parse(Http.responseText) : []
-                    let originNode = document.getElementById('listOfFileId')
-                    let count = 0
-                    let all = data.length
-
-                    for (let each of data) {
-                        count += 1
-                        let node = document.createElement('div')
-                        node.setAttribute('class', 'defaultHidden row border-bottom border-primary m-1')
-                        let node1 = document.createElement("div");
-                        let node1txt = document.createTextNode('[' + count + '/' + all +  '] '+ each.file.split('_').join(' ') + ' (' + parseFloat(each.size).toFixed(3) +' Mb)')
-                        node1.setAttribute('class', 'col-12 text-wrap pr-3 labelOverflow')
-                        node1.append(node1txt)
-        
-                        let node2 = document.createElement("div");
-                        node2.setAttribute('class', 'col-12')
-                        
-                        // a tag
-                        let node2adiv = document.createElement('div')
-                        node2adiv.className = 'm-3'
-                        let node2a = document.createElement("a")
-                        node2a.setAttribute('href', (host + '/download?filename=' + each.file))
-                        node2a.download = each.file;
-                        node2a.textContent = "Download";
-                        node2adiv.append(node2a)
-                        node2.append(node2adiv)
-
-                        // audio tag
-                        let node2Vide0 = document.createElement('audio')
-                        node2Vide0.setAttribute('autostart', 'false')
-                        node2Vide0.setAttribute('preload', 'none')
-                        node2Vide0.setAttribute('controls', 'controls')
-                        node2Vide0.setAttribute('width', '100%')
-                        node2Vide0.setAttribute('height', '50')
-                        node2Vide0.setAttribute('type', 'audio/mpeg')
-
-                        // source tag
-                        let node2Vide0Src = document.createElement('source')
-                        node2Vide0Src.setAttribute('src', host + '/download?filename=' + each.file)
-                        node2Vide0.append(node2Vide0Src)
-
-                        node2.append(node2Vide0)
-        
-        
-                        let node3 = document.createElement("div");
-
-                        let node3btn = document.createElement('button')
-                        let node3btntxt = document.createTextNode('Xóa')
-                        node3btn.append(node3btntxt)
-                        node3btn.setAttribute('class', 'btn btn-danger m-1')
-                        node3btn.setAttribute('onclick', 'xoaFile("' + each.file + '")')
-
-                        let node4btn = document.createElement('button')
-                        let node4btntxt = document.createTextNode('Back')
-                        node4btn.append(node4btntxt)
-                        node4btn.setAttribute('class', 'btn btn-info m-1')
-                        node4btn.setAttribute('onclick', 'plusSlides(-1, "list")')
-
-                        let node5btn = document.createElement('button')
-                        let node5btntxt = document.createTextNode('Nex')
-                        node5btn.append(node5btntxt)
-                        node5btn.setAttribute('class', 'btn btn-info m-1')
-                        node5btn.setAttribute('onclick', 'plusSlides(1, "list")')
-
-                        node3.setAttribute('class', 'col-12 text-center p-1')
-                        node3.append(node3btn)
-                        node3.append(node4btn)
-                        node3.append(node5btn)
-        
-                        node.append(node2)
-                        node.append(node3)
-                        node.append(node1)
-                        originNode.append(node)
-                    }
-
-                    showSlides(1, 'list')
-                }
-            } catch (err) {
-                console.log(err)
-            }
-        }
-    }
-
-    // Next/previous controls
-    function plusSlides(n, option) {
-        if (option === 'list') showSlides(slideIndexMP3 += n, option);
-        if (option === 'search') showSlides(slideIndexSearch += n, option);
-    }
-
-    function showSlides(n, option) {
-        var i;
-        var className = "defaultHidden"
-        if (option === 'list') className = "defaultHidden"
-        if (option === 'search') className = "defaultHiddenSearch"
-
-        var slides = document.getElementsByClassName(className);
-        if (slides.length > 0) {
-            if (n > slides.length) {
-                if (option === 'list') slideIndexMP3 = 1
-                if (option === 'search') slideIndexSearch = 1
-            }
-            if (n < 1) {
-                if (option === 'list') slideIndexMP3 = slides.length
-                if (option === 'search') slideIndexSearch = slides.length
-            }
-            for (i = 0; i < slides.length; i++) {
-                slides[i].style.display = "none";
-            }
-
-            if (option === 'list') slides[slideIndexMP3-1].style.display = "block";
-            if (option === 'search') slides[slideIndexSearch-1].style.display = "block";
-        }
-    }
-</script>
 </body>
 </html>

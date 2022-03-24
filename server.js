@@ -19,6 +19,16 @@ app.use(
     bodyParser({limit: '500mb'})
 )
 
+app.get('/js/jsfunction.js', function(request, response){
+    console.log('__dirname===', __dirname)
+    response.sendFile(__dirname + '/js/jsfunction.js');
+});
+
+app.get('/css/style.css', function(request, response){
+    console.log('__dirname===', __dirname)
+    response.sendFile(__dirname + '/css/style.css');
+});
+
 app.get('/index', function(request, response){
     console.log('__dirname===', __dirname)
     response.sendFile(__dirname + '/index.html');

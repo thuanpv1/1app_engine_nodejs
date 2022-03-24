@@ -1,0 +1,26 @@
+.labelOverflow {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    height: 140px;
+}
+.colorgreen {
+    color: green;
+}
+.colorred {
+    color: red;
+}
+
+.defaultHidden {
+    display: '';
+}
+
+.defaultHiddenSearch {
+    display: '';
+}
+.textOverFlow {
+    height: 140px;
+    text-overflow: ellipsis;
+}
+
+audio { width: 50px !important; display: block; margin:20px; }
