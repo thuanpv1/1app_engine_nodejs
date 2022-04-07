@@ -10,7 +10,22 @@ const ytdl = require('ytdl-core');
 const fs = require('fs-extra');
 const ffmpegOrigin = require('ffmpeg');
 const kue = require("kue");
-const queue = kue.createQueue();
+const {default: PQueue} = require('p-queue')
+
+// const redis = require('redis')
+const queue = new PQueue({
+    concurrency: 1,
+    intervalCap: 1,
+    interval: 10
+  })
+// const queue = kue.createQueue();
+// console.log('client ===', queue.client)
+// queue.client = redis.createClient({
+//     host: "127.0.0.1",
+//     no_ready_check: false,
+//     auth_pass: 'Lamgicopass1234',
+//     password: 'Lamgicopass1234'
+//   });
 
 app.use(express.json({limit: '500mb'}));
 app.use(express.urlencoded({limit: '500mb'}));
@@ -84,12 +99,17 @@ app.get('/youtube2mp3', (request, response) => {
     let { youtubeUrl } = (request.query || {})
     if (youtubeUrl) {
         // download(youtubeUrl, response)
-        queue.create("download", {
-            ...(request.query || {})
-        })
-        .priority("high")
-        .attempts(5)
-        .save();
+
+        // old code
+        // queue.create("download", {
+        //     ...(request.query || {})
+        // })
+        // .priority("high")
+        // .attempts(5)
+        // .save();
+
+        // new code
+        queue.add(() => download(youtubeUrl, null))
         response.json(true)
     }
     else {
@@ -187,15 +207,15 @@ app.get('/', (req, res) => {
 });
 
 
-queue.process("download", (job, done) => {
-    let { youtubeUrl } = job.data
-    console.log('youtubeUrl===', youtubeUrl)
-    download(youtubeUrl)
-    done()
-    return true
-  });
+// queue.process("download", (job, done) => {
+//     let { youtubeUrl } = job.data
+//     console.log('youtubeUrl===', youtubeUrl)
+//     download(youtubeUrl)
+//     done()
+//     return true
+//   });
   
-  app.use("/kue-api/", kue.app);
+//   app.use("/kue-api/", kue.app);
 
 // Listen to the App Engine-specified port, or 8080 otherwise
 const PORT = parseInt(process.env.PORT) || 8080;

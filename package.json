@@ -26,6 +26,7 @@
     "nodemon": "^2.0.15",
     "sanitize-filename": "^1.6.3",
     "youtube-search-api": "^1.1.0",
-    "ytdl-core": "^4.11.0"
+    "ytdl-core": "^4.11.0",
+    "p-queue": "6.6.2"
   }
 }
